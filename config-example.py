@@ -1,6 +1,10 @@
-sensor = ""
+db = "templog.db"
+
+sensor = "00-00000000000000"
+senseTime = 30
 
 location = "Living Room"
 
-webpage = True
-webroot = "/home/user/folder"
+outputHTML = True
+outputGraphs = True
+webroot = "/var/www/public_html/temperature/"

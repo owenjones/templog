@@ -23,3 +23,16 @@ def startOutput() :
 	pass
 
 if __name__ == "__main__" :
+	# TODO: Input arguments to generate a new DB, and possibly enter some of the config details?
+
+	connectDB()
+	l = Logger(DB)
+	o = Output(DB)
+	l.start()
+	o.start()
+
+	run = True
+	while run :
+		t = Threading.enumerate()
+		# Not sure what's going on around here - I guess just checking both threads are still running and restarting them if they're not?
+		sleep(10)

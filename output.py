@@ -5,6 +5,7 @@ import matplotlib.pyplot as pyplot
 import matplotlib.dates as dates
 from matplotlib.ticker import MultipleLocator
 from datetime import datetime as d
+import config
 
 class Output(Thread) :
 	DB = None
@@ -15,11 +16,9 @@ class Output(Thread) :
 	last =       [0,    0,    0,     0,     0]
 	thresholds = [120,  60,   720,   1440,  1440]
 
-	def __init__(self, DB, html, graphs) :
+	def __init__(self, DB) :
 		Thread.__init__(self)
 		self.DB = DB
-		self.generateHtml = html
-		self.generateGraphs = graphs
 
 	def run(self) :
 		pass
@@ -28,19 +27,18 @@ class Output(Thread) :
 		pass
 
 	def getTemps(self, number) :
-		pass
+		number = (number, )
+		c = self.DB.cursor()
+		c.execute("SELECT temperature FROM temperatures ORDER BY time DESC LIMIT ?", number)
+		return c.fetchall()
 
 	def html(self, tick) :
-		c = self.DB.cursor()
-		c.execute("SELECT temperature FROM temperatures ORDER BY time DESC LIMIT 1")
-		temp = c.fetchone()
-
 		with open("") as file :
-			f = file.read()
+			data = file.read()
 
-		f = f.replace("{TEMP}", str(temp))
-		f = f.replace("{TIME}", "{n:%H}:{n:%M}".format(n=d.now(tzlocal())))
-		f = f.replace("{LOCATION}", config.location)
+		data = data.replace("{TEMP}", str(temp))
+		data = data.replace("{TIME}", "{n:%H}:{n:%M}".format(n=d.now(tzlocal())))
+		data = data.replace("{LOCATION}", config.location)
 
 		if temp > 24.5 :
 		  range = "hot"
@@ -49,7 +47,10 @@ class Output(Thread) :
 		else :
 		  range = "cold"
 
-		f = f.replace("{RANGE}", range)
+		data = data.replace("{RANGE}", range)
+
+		with open("/home/owen/therm/index.html", "w") as f :
+		  f.write(data)
 
 		self.last[0] = tick
 
